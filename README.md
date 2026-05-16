@@ -25,10 +25,16 @@ ec-api/
     │   └── DataInitializer.java     # 起動時サンプルデータ投入
     ├── controller/
     │   ├── ProductController.java
-    │   └── OrderController.java
+    │   ├── OrderController.java
+    │   └── dto/                     # Web 層専用 DTO (Request/Response)
+    │       ├── ProductDto.java
+    │       └── OrderDto.java
     ├── service/
     │   ├── ProductService.java
-    │   └── OrderService.java        # 在庫チェック・トランザクション管理
+    │   ├── OrderService.java        # 在庫チェック・トランザクション管理
+    │   └── dto/                     # Service 層専用 DTO (Command/Result)
+    │       ├── ProductServiceDto.java
+    │       └── OrderServiceDto.java
     ├── repository/
     │   ├── ProductRepository.java
     │   └── OrderRepository.java
@@ -36,18 +42,16 @@ ec-api/
     │   ├── Product.java
     │   ├── Order.java
     │   └── OrderItem.java
-    ├── dto/
-    │   └── Dto.java                 # Request / Response DTO
     └── exception/
         └── GlobalExceptionHandler.java
 ```
 
 ## 起動手順
 
-### 1. PostgreSQL でデータベース作成
+### 1. docker起動
 
-```sql
-CREATE DATABASE ec_db;
+```
+docker-compose up -d
 ```
 
 ### 2. 接続設定の確認・変更
