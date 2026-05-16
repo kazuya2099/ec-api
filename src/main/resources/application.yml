@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ec_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true            # SQLログ出力（学習用）
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: Asia/Tokyo
+    open-in-view: false       # OSIV は明示的に false 推奨
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.example: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE  # バインドパラメータをログ出力
