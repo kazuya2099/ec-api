@@ -2,7 +2,7 @@ package com.example.ecapi.service;
 
 import com.example.ecapi.entity.Product;
 import com.example.ecapi.repository.ProductRepository;
-import com.example.ecapi.service.dto.ProductServiceDto;
+import com.example.ecapi.service.dto.product.ProductServiceDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

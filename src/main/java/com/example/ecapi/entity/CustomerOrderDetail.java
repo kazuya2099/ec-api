@@ -6,12 +6,12 @@ import lombok.*;
 
 /** 注文明細エンティティ */
 @Entity
-@Table(name = "order_items")
+@Table(name = "customer_order_detail")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderItem {
+public class CustomerOrderDetail {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class OrderItem {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "order_id", nullable = false)
-  private Order order;
+  private CustomerOrder order;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "product_id", nullable = false)

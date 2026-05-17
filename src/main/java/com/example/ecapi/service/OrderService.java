@@ -1,11 +1,12 @@
 package com.example.ecapi.service;
 
-import com.example.ecapi.entity.Order;
-import com.example.ecapi.entity.OrderItem;
+import com.example.ecapi.constant.OrderStatus;
+import com.example.ecapi.entity.CustomerOrder;
+import com.example.ecapi.entity.CustomerOrderDetail;
 import com.example.ecapi.entity.Product;
-import com.example.ecapi.repository.OrderRepository;
+import com.example.ecapi.repository.CutomerOrderRepository;
 import com.example.ecapi.repository.ProductRepository;
-import com.example.ecapi.service.dto.OrderServiceDto;
+import com.example.ecapi.service.dto.order.OrderServiceDto;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class OrderService {
 
-  private final OrderRepository orderRepository;
+  private final CutomerOrderRepository orderRepository;
   private final ProductRepository productRepository;
 
   /** 全注文取得 */
@@ -33,7 +34,7 @@ public class OrderService {
 
   /** 注文詳細取得（JOIN FETCH で N+1 問題を回避） */
   public OrderServiceDto.OrderResult findById(Long id) {
-    Order order =
+    CustomerOrder order =
         orderRepository
             .findByIdWithItems(id)
             .orElseThrow(() -> new IllegalArgumentException("注文が見つかりません: id=" + id));
@@ -52,7 +53,7 @@ public class OrderService {
    */
   @Transactional
   public OrderServiceDto.OrderResult create(OrderServiceDto.CreateCommand command) {
-    List<OrderItem> items = new ArrayList<>();
+    List<CustomerOrderDetail> items = new ArrayList<>();
     BigDecimal totalAmount = BigDecimal.ZERO;
 
     for (OrderServiceDto.ItemCommand itemReq : command.items()) {
@@ -74,8 +75,8 @@ public class OrderService {
       product.setStock(product.getStock() - itemReq.quantity());
       productRepository.save(product);
 
-      OrderItem item =
-          OrderItem.builder()
+      CustomerOrderDetail item =
+          CustomerOrderDetail.builder()
               .product(product)
               .quantity(itemReq.quantity())
               .unitPrice(product.getPrice())
@@ -85,15 +86,15 @@ public class OrderService {
           totalAmount.add(product.getPrice().multiply(BigDecimal.valueOf(itemReq.quantity())));
     }
 
-    Order order =
-        Order.builder()
+    CustomerOrder order =
+        CustomerOrder.builder()
             .customerName(command.customerName())
-            .status(Order.OrderStatus.PENDING)
+            .status(OrderStatus.PENDING)
             .totalAmount(totalAmount)
             .items(new ArrayList<>())
             .build();
 
-    Order savedOrder = orderRepository.save(order);
+    CustomerOrder savedOrder = orderRepository.save(order);
 
     // 双方向リレーションの order 参照を設定してから再保存
     items.forEach(
@@ -107,8 +108,8 @@ public class OrderService {
 
   /** 注文ステータス更新 */
   @Transactional
-  public OrderServiceDto.OrderResult updateStatus(Long id, Order.OrderStatus newStatus) {
-    Order order =
+  public OrderServiceDto.OrderResult updateStatus(Long id, OrderStatus newStatus) {
+    CustomerOrder order =
         orderRepository
             .findById(id)
             .orElseThrow(() -> new IllegalArgumentException("注文が見つかりません: id=" + id));

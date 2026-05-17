@@ -13,7 +13,7 @@ import lombok.*;
  * Validation (@NotBlank 等) で行う。
  */
 @Entity
-@Table(name = "products")
+@Table(name = "product")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

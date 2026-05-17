@@ -1,9 +1,9 @@
-package com.example.ecapi.controller;
+package com.example.ecapi.controller.order;
 
-import com.example.ecapi.controller.dto.OrderDto;
-import com.example.ecapi.entity.Order;
+import com.example.ecapi.constant.OrderStatus;
+import com.example.ecapi.controller.dto.order.OrderDto;
 import com.example.ecapi.service.OrderService;
-import com.example.ecapi.service.dto.OrderServiceDto;
+import com.example.ecapi.service.dto.order.OrderServiceDto;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +51,7 @@ public class OrderController {
 
   @PatchMapping("/{id}/status")
   public ResponseEntity<OrderDto.OrderResponse> updateStatus(
-      @PathVariable Long id, @RequestParam Order.OrderStatus status) {
+      @PathVariable Long id, @RequestParam OrderStatus status) {
     OrderServiceDto.OrderResult result = orderService.updateStatus(id, status);
     return ResponseEntity.ok(toResponse(result));
   }

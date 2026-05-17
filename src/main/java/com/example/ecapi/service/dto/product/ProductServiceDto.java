@@ -1,4 +1,4 @@
-package com.example.ecapi.service.dto;
+package com.example.ecapi.service.dto.product;
 
 import com.example.ecapi.entity.Product;
 import java.math.BigDecimal;

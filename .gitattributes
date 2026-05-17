@@ -1,0 +1,6 @@
+# 1. 既存のインデックスをクリアし、現在の設定に基づいてファイルを再インデックスします
+git add --renormalize .
+
+# 2. 差分を確認し、コミットします
+git status
+git commit -m "chore: 改行コードをLFに一括変換"

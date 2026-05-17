@@ -1,8 +1,8 @@
-package com.example.ecapi.controller;
+package com.example.ecapi.controller.product;
 
-import com.example.ecapi.controller.dto.ProductDto.*;
+import com.example.ecapi.controller.dto.product.ProductDto.*;
 import com.example.ecapi.service.ProductService;
-import com.example.ecapi.service.dto.ProductServiceDto;
+import com.example.ecapi.service.dto.product.ProductServiceDto;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

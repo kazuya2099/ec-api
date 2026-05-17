@@ -1,6 +1,6 @@
-package com.example.ecapi.service.dto;
+package com.example.ecapi.service.dto.order;
 
-import com.example.ecapi.entity.Order;
+import com.example.ecapi.entity.CustomerOrder;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +25,7 @@ public sealed interface OrderServiceDto {
       LocalDateTime orderedAt,
       LocalDateTime updatedAt)
       implements OrderServiceDto {
-    public static OrderResult from(Order order) {
+    public static OrderResult from(CustomerOrder order) {
       return OrderResult.builder()
           .id(order.getId())
           .customerName(order.getCustomerName())
@@ -43,7 +43,6 @@ public sealed interface OrderServiceDto {
                               item.getSubtotal()))
                   .toList())
           .orderedAt(order.getCreatedAt())
-
           .build();
     }
   }

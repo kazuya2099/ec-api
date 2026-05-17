@@ -10,12 +10,12 @@ import lombok.*;
 
 /** 注文エンティティ */
 @Entity
-@Table(name = "orders")
+@Table(name = "customer_order")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Order {
+public class CustomerOrder {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class Order {
   // CascadeType.ALL + orphanRemoval=true で明細の追加・削除を Order 経由で管理
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
-  private List<OrderItem> items = new ArrayList<>();
+  private List<CustomerOrderDetail> items = new ArrayList<>();
 
   @Column(name = "ordered_at", updatable = false)
   private LocalDateTime orderedAt;

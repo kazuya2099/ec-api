@@ -1,0 +1,31 @@
+-- V2__add_common_columns.sql
+
+-- product に共通カラム追加
+ALTER TABLE product
+    ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD COLUMN deleted_at TIMESTAMP NULL,
+    ADD COLUMN created_by VARCHAR(255),
+    ADD COLUMN updated_by VARCHAR(255),
+    ADD COLUMN deleted_by VARCHAR(255),
+    ADD COLUMN version INT NOT NULL DEFAULT 0;
+
+-- customer_order に不足カラム追加（created_at は既に存在）
+ALTER TABLE customer_order
+    ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD COLUMN deleted_at TIMESTAMP NULL,
+    ADD COLUMN created_by VARCHAR(255),
+    ADD COLUMN updated_by VARCHAR(255),
+    ADD COLUMN deleted_by VARCHAR(255),
+    ADD COLUMN version INT NOT NULL DEFAULT 0;
+
+-- customer_order_detail に共通カラム追加
+ALTER TABLE customer_order_detail
+    ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD COLUMN deleted_at TIMESTAMP NULL,
+    ADD COLUMN created_by VARCHAR(255),
+    ADD COLUMN updated_by VARCHAR(255),
+    ADD COLUMN deleted_by VARCHAR(255),
+    ADD COLUMN version INT NOT NULL DEFAULT 0;

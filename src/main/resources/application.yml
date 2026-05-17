@@ -8,13 +8,18 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true            # SQLログ出力（学習用）
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
         jdbc:
           time_zone: Asia/Tokyo
     open-in-view: false       # OSIV は明示的に false 推奨
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
 
 server:
   port: 8080

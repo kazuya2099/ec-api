@@ -1,6 +1,7 @@
 package com.example.ecapi.repository;
 
-import com.example.ecapi.entity.Order;
+import com.example.ecapi.constant.OrderStatus;
+import com.example.ecapi.entity.CustomerOrder;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,17 +9,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 /** 注文リポジトリ */
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface CutomerOrderRepository extends JpaRepository<CustomerOrder, Long> {
 
-  List<Order> findByCustomerName(String customerName);
+  List<CustomerOrder> findByCustomerName(String customerName);
 
-  List<Order> findByStatus(Order.OrderStatus status);
+  List<CustomerOrder> findByStatus(OrderStatus status);
 
   // LEFT JOIN FETCH で N+1 問題を回避して注文明細を一括取得
   @Query(
-      "SELECT DISTINCT o FROM Order o "
+      "SELECT DISTINCT o FROM CustomerOrder o "
           + "LEFT JOIN FETCH o.items i "
           + "LEFT JOIN FETCH i.product "
           + "WHERE o.id = :id")
-  Optional<Order> findByIdWithItems(@Param("id") Long id);
+  Optional<CustomerOrder> findByIdWithItems(@Param("id") Long id);
 }
