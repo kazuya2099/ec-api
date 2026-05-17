@@ -21,7 +21,6 @@ public class CustomerOrder {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  // 簡易実装のため顧客名を文字列で保持（本格実装では User エンティティとリレーション）
   @Column(name = "customer_name", nullable = false)
   private String customerName;
 
@@ -33,25 +32,43 @@ public class CustomerOrder {
   private BigDecimal totalAmount;
 
   // 注文明細（1 対多）
-  // CascadeType.ALL + orphanRemoval=true で明細の追加・削除を Order 経由で管理
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<CustomerOrderDetail> items = new ArrayList<>();
 
-  @Column(name = "ordered_at", updatable = false)
-  private LocalDateTime orderedAt;
-
   @Column(name = "created_at", updatable = false)
   private LocalDateTime createdAt;
 
-  @Column(name = "updated_at", updatable = false)
+  @Column(name = "updated_at")
   private LocalDateTime updatedAt;
+
+  @Column(name = "deleted_at")
+  private LocalDateTime deletedAt;
+
+  @Column(name = "created_by", length = 255)
+  private String createdBy;
+
+  @Column(name = "updated_by", length = 255)
+  private String updatedBy;
+
+  @Column(name = "deleted_by", length = 255)
+  private String deletedBy;
+
+  @Version
+  @Column(nullable = false)
+  private int version;
 
   @PrePersist
   protected void onCreate() {
-    orderedAt = LocalDateTime.now();
+    createdAt = LocalDateTime.now();
+    updatedAt = LocalDateTime.now();
     if (status == null) {
       status = OrderStatus.PENDING;
     }
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    updatedAt = LocalDateTime.now();
   }
 }

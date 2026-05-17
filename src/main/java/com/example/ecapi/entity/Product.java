@@ -48,6 +48,22 @@ public class Product {
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
+  @Column(name = "deleted_at")
+  private LocalDateTime deletedAt;
+
+  @Column(name = "created_by", length = 255)
+  private String createdBy;
+
+  @Column(name = "updated_by", length = 255)
+  private String updatedBy;
+
+  @Column(name = "deleted_by", length = 255)
+  private String deletedBy;
+
+  @Version
+  @Column(nullable = false)
+  private int version;
+
   @PrePersist
   protected void onCreate() {
     createdAt = LocalDateTime.now();

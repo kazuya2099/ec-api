@@ -2,6 +2,7 @@ package com.example.ecapi.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import lombok.*;
 
 /** 注文明細エンティティ */
@@ -18,7 +19,7 @@ public class CustomerOrderDetail {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "order_id", nullable = false)
+  @JoinColumn(name = "customer_order_id", nullable = false) // 修正: order_id -> customer_order_id
   private CustomerOrder order;
 
   @ManyToOne(fetch = FetchType.EAGER)
@@ -28,11 +29,50 @@ public class CustomerOrderDetail {
   @Column(nullable = false)
   private int quantity;
 
-  // 注文時の単価スナップショット（後から商品価格が変わっても注文額は変わらない）
   @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
   private BigDecimal unitPrice;
 
-  public BigDecimal getSubtotal() {
-    return unitPrice.multiply(BigDecimal.valueOf(quantity));
+  @Column(name = "subtotal", nullable = false, precision = 10, scale = 2) // subtotal もカラムとして追加
+  private BigDecimal subtotal;
+
+  @Column(name = "created_at", updatable = false)
+  private LocalDateTime createdAt;
+
+  @Column(name = "updated_at")
+  private LocalDateTime updatedAt;
+
+  @Column(name = "deleted_at")
+  private LocalDateTime deletedAt;
+
+  @Column(name = "created_by", length = 255)
+  private String createdBy;
+
+  @Column(name = "updated_by", length = 255)
+  private String updatedBy;
+
+  @Column(name = "deleted_by", length = 255)
+  private String deletedBy;
+
+  @Version
+  @Column(nullable = false)
+  private int version;
+
+  @PrePersist
+  protected void onCreate() {
+    createdAt = LocalDateTime.now();
+    updatedAt = LocalDateTime.now();
+    // subtotal の自動計算
+    if (unitPrice != null && quantity > 0) {
+      this.subtotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
+    }
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    updatedAt = LocalDateTime.now();
+    // subtotal の自動計算
+    if (unitPrice != null && quantity > 0) {
+      this.subtotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
+    }
   }
 }
