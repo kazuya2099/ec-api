@@ -22,8 +22,8 @@ java {
 spotless {
     java {
         // Google Java Format でコード整形
-        googleJavaFormat("1.25.0")
-        // 未使用 import を自動削除
+        googleJavaFormat("1.25.0").aosp()
+        // import を自動削除
         removeUnusedImports()
         // 末尾空白を削除
         trimTrailingWhitespace()
@@ -58,6 +58,9 @@ dependencies {
     // ─── Validation ────────────────────────────
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+    annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
     // ─── PostgreSQL Driver ──────────────────────
     runtimeOnly("org.postgresql:postgresql")
 

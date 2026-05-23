@@ -1,9 +1,12 @@
 package com.example.ecapi.controller.order;
 
 import com.example.ecapi.constant.OrderStatus;
-import com.example.ecapi.controller.dto.order.OrderDto;
-import com.example.ecapi.service.OrderService;
-import com.example.ecapi.service.dto.order.OrderServiceDto;
+import com.example.ecapi.controller.order.dto.OrderRequest;
+import com.example.ecapi.controller.order.dto.OrderResponse;
+import com.example.ecapi.controller.order.mapper.OrderApiMapper;
+import com.example.ecapi.service.order.OrderService;
+import com.example.ecapi.service.order.dto.CreateOrder;
+import com.example.ecapi.service.order.dto.OrderResult;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,66 +29,34 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class OrderController {
 
-  private final OrderService orderService;
+    private final OrderService orderService;
+    private final OrderApiMapper orderApiMapper;
 
-  @GetMapping
-  public ResponseEntity<List<OrderDto.OrderResponse>> getAll() {
-    List<OrderDto.OrderResponse> responses =
-        orderService.findAll().stream().map(this::toResponse).toList();
-    return ResponseEntity.ok(responses);
-  }
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> getAll() {
+        List<OrderResult> result = orderService.findAll();
+        List<OrderResponse> responses = orderApiMapper.toOrderResponseList(result);
+        return ResponseEntity.ok(responses);
+    }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<OrderDto.OrderResponse> getById(@PathVariable Long id) {
-    OrderServiceDto.OrderResult result = orderService.findById(id);
-    return ResponseEntity.ok(toResponse(result));
-  }
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderResponse> getById(@PathVariable Long id) {
+        OrderResult result = orderService.findById(id);
+        return ResponseEntity.ok(orderApiMapper.toOrderResponse(result));
+    }
 
-  @PostMapping
-  public ResponseEntity<OrderDto.OrderResponse> create(
-      @Valid @RequestBody OrderDto.OrderRequest request) {
-    OrderServiceDto.CreateCommand command = toCommand(request);
-    OrderServiceDto.OrderResult result = orderService.create(command);
-    return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(result));
-  }
+    @PostMapping
+    public ResponseEntity<OrderResponse> create(@Valid @RequestBody OrderRequest request) {
+        CreateOrder createOrder = orderApiMapper.toCreateOrder(request);
+        OrderResult result = orderService.create(createOrder);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(orderApiMapper.toOrderResponse(result));
+    }
 
-  @PatchMapping("/{id}/status")
-  public ResponseEntity<OrderDto.OrderResponse> updateStatus(
-      @PathVariable Long id, @RequestParam OrderStatus status) {
-    OrderServiceDto.OrderResult result = orderService.updateStatus(id, status);
-    return ResponseEntity.ok(toResponse(result));
-  }
-
-  // --- 変換用プライベートメソッド ---
-
-  private OrderDto.OrderResponse toResponse(OrderServiceDto.OrderResult result) {
-    return OrderDto.OrderResponse.builder()
-        .id(result.id())
-        .customerName(result.customerName())
-        .status(result.status())
-        .totalAmount(result.totalAmount())
-        .items(
-            result.items().stream()
-                .map(
-                    i ->
-                        new OrderDto.OrderItemResponse(
-                            i.productId(),
-                            i.productName(),
-                            i.quantity(),
-                            i.unitPrice(),
-                            i.subtotal()))
-                .toList())
-        .orderedAt(result.orderedAt())
-        .build();
-  }
-
-  private OrderServiceDto.CreateCommand toCommand(OrderDto.OrderRequest request) {
-    return OrderServiceDto.CreateCommand.builder()
-        .customerName(request.customerName())
-        .items(
-            request.items().stream()
-                .map(i -> new OrderServiceDto.ItemCommand(i.productId(), i.quantity()))
-                .toList())
-        .build();
-  }
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<OrderResponse> updateStatus(
+            @PathVariable Long id, @RequestParam OrderStatus status) {
+        OrderResult result = orderService.updateStatus(id, status);
+        return ResponseEntity.ok(orderApiMapper.toOrderResponse(result));
+    }
 }

@@ -118,11 +118,19 @@ docker-compose up -d
 ## 動作確認（curl）
 
 ```bash
-# 商品一覧
-curl http://localhost:8080/api/products
+# 一覧
+curl http://localhost:8080/api/products | jq
+curl http://localhost:8080/api/orders | jq
+
+# ID指定
+curl http://localhost:8080/api/products/2 | jq
+curl http://localhost:8080/api/orders/1 | jq
 
 # 商品名検索
-curl "http://localhost:8080/api/products?q=USBハブ"
+curl "http://localhost:8080/api/products?name=$(echo -n 'USBハブ' | jq -sRr @uri)"
+curl "http://localhost:8080/api/products?description=$(echo -n '15インチ' | jq -sRr @uri)"
+curl "http://localhost:8080/api/products?price=$(echo -n '10000' | jq -sRr @uri)"
+curl "http://localhost:8080/api/products?name=$(echo -n 'マウス' | jq -sRr @uri)&description&price=$(echo -n '10000' | jq -sRr @uri)"
 
 # 商品登録
 curl -X POST http://localhost:8080/api/products \
@@ -133,10 +141,10 @@ curl -X POST http://localhost:8080/api/products \
 curl -X POST http://localhost:8080/api/orders \
   -H "Content-Type: application/json" \
   -d '{
-    "customerName": "山田太郎",
+    "customerName": "鈴木一郎",
     "items": [
-      {"productId": 1, "quantity": 1},
-      {"productId": 2, "quantity": 2}
+      {"productId": 3, "quantity": 2},
+      {"productId": 5, "quantity": 3}
     ]
   }'
 

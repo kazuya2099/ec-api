@@ -11,15 +11,14 @@ import org.springframework.data.repository.query.Param;
 /** 注文リポジトリ */
 public interface CutomerOrderRepository extends JpaRepository<CustomerOrder, Long> {
 
-  List<CustomerOrder> findByCustomerName(String customerName);
+    List<CustomerOrder> findByCustomerName(String customerName);
 
-  List<CustomerOrder> findByStatus(OrderStatus status);
+    List<CustomerOrder> findByStatus(OrderStatus status);
 
-  // LEFT JOIN FETCH で N+1 問題を回避して注文明細を一括取得
-  @Query(
-      "SELECT DISTINCT o FROM CustomerOrder o "
-          + "LEFT JOIN FETCH o.items i "
-          + "LEFT JOIN FETCH i.product "
-          + "WHERE o.id = :id")
-  Optional<CustomerOrder> findByIdWithItems(@Param("id") Long id);
+    @Query(
+            "SELECT DISTINCT o FROM CustomerOrder o "
+                    + "LEFT JOIN FETCH o.items i "
+                    + "LEFT JOIN FETCH i.product "
+                    + "WHERE o.id = :id")
+    Optional<CustomerOrder> findByIdWithItems(@Param("id") Long id);
 }

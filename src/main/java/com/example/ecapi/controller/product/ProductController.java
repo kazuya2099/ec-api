@@ -1,9 +1,13 @@
 package com.example.ecapi.controller.product;
 
-import com.example.ecapi.controller.dto.product.ProductDto.*;
-import com.example.ecapi.service.ProductService;
-import com.example.ecapi.service.dto.product.ProductServiceDto;
+import com.example.ecapi.controller.product.dto.CreateProductRequest;
+import com.example.ecapi.controller.product.dto.ProductResponse;
+import com.example.ecapi.controller.product.dto.UpdateProductRequest;
+import com.example.ecapi.controller.product.mapper.ProductApiMapper;
+import com.example.ecapi.service.product.ProductService;
+import com.example.ecapi.service.product.dto.ProductResult;
 import jakarta.validation.Valid;
+import java.math.BigDecimal; // BigDecimal をインポート
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,63 +31,44 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ProductController {
 
-  private final ProductService productService;
+    private final ProductService productService;
+    private final ProductApiMapper productApiMapper;
 
-  @GetMapping
-  public ResponseEntity<List<ProductResponse>> getAll(@RequestParam(required = false) String q) {
-    List<ProductServiceDto.ProductResult> results;
-    if (q != null && !q.isBlank()) {
-      results = productService.search(q);
-    } else {
-      results = productService.findAll();
+    @GetMapping
+    public ResponseEntity<List<ProductResponse>> getAll(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) BigDecimal price
+    ) {
+        name = name == null ? null : name.trim();
+        description = description == null ? null : description.trim();
+        List<ProductResult> results = productService.searchProducts(name, description, price);
+        return ResponseEntity.ok(productApiMapper.toProductResponseList(results));
     }
-    return ResponseEntity.ok(results.stream().map(this::toResponse).toList());
-  }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<ProductResponse> getById(@PathVariable Long id) {
-    return ResponseEntity.ok(toResponse(productService.findById(id)));
-  }
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(productApiMapper.toProductResponse(productService.findById(id)));
+    }
 
-  @PostMapping
-  public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
-    ProductServiceDto.ProductResult result = productService.create(toCommand(request));
-    return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(result));
-  }
+    @PostMapping
+    public ResponseEntity<ProductResponse> create(
+            @Valid @RequestBody CreateProductRequest request) {
+        ProductResult result = productService.create(productApiMapper.toCreateProduct(request));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(productApiMapper.toProductResponse(result));
+    }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<ProductResponse> update(
-      @PathVariable Long id, @Valid @RequestBody ProductRequest request) {
-    ProductServiceDto.ProductResult result = productService.update(id, toCommand(request));
-    return ResponseEntity.ok(toResponse(result));
-  }
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponse> update(
+            @PathVariable Long id, @Valid @RequestBody UpdateProductRequest request) {
+        ProductResult result = productService.update(id, productApiMapper.toUpdateProduct(request));
+        return ResponseEntity.ok(productApiMapper.toProductResponse(result));
+    }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Long id) {
-    productService.delete(id);
-    return ResponseEntity.noContent().build();
-  }
-
-  // --- 変換用プライベートメソッド ---
-
-  private ProductResponse toResponse(ProductServiceDto.ProductResult result) {
-    return ProductResponse.builder()
-        .id(result.id())
-        .name(result.name())
-        .description(result.description())
-        .price(result.price())
-        .stock(result.stock())
-        .createdAt(result.createdAt())
-        .updatedAt(result.updatedAt())
-        .build();
-  }
-
-  private ProductServiceDto.ProductCommand toCommand(ProductRequest request) {
-    return ProductServiceDto.ProductCommand.builder()
-        .name(request.name())
-        .description(request.description())
-        .price(request.price())
-        .stock(request.stock())
-        .build();
-  }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        productService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
