@@ -104,7 +104,6 @@ public class OrderService {
             }
             // 在庫減算
             product.setStock(product.getStock() - item.quantity());
-            productRepository.save(product);
 
             CustomerOrderDetail detail = new CustomerOrderDetail();
             detail.setOrder(order);

@@ -24,21 +24,15 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "商品名は必須です")
-    @Size(max = 100)
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Size(max = 500)
     @Column(length = 500)
     private String description;
 
-    @NotNull(message = "価格は必須です")
-    @DecimalMin(value = "0.0", inclusive = false, message = "価格は0より大きい必要があります")
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Min(value = 0, message = "在庫数は0以上である必要があります")
     @Column(nullable = false)
     private int stock;
 

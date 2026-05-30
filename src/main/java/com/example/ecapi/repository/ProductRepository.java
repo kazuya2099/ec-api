@@ -19,15 +19,6 @@ public interface ProductRepository
     // 商品名のあいまい検索（大文字小文字無視）
     List<Product> findByNameContainingIgnoreCase(String keyword);
 
-    // 商品説明のあいまい検索（大文字小文字無視）
-    List<Product> findByDescriptionContainingIgnoreCase(String keyword);
-
-    // 価格で指定された値以下の商品を検索
-    List<Product> findByPriceLessThanEqual(BigDecimal price);
-
-    // 在庫あり商品のみ取得
-    List<Product> findByStockGreaterThan(int minStock);
-
     // 価格範囲検索（JPQL）
     @Query("""
         SELECT p FROM Product p
