@@ -8,8 +8,7 @@ import lombok.*;
 /**
  * 商品エンティティ
  *
- * <p>Hibernate 7 / Jakarta EE 11 ベース。 @Column の nullable は DB スキーマ生成時の制約。 実行時バリデーションは Bean
- * Validation (@NotBlank 等) で行う。
+ * <p>Hibernate 7 / Jakarta EE 11 ベース。 @Column の nullable は DB スキーマ生成時の制約。
  */
 @Entity
 @Table(name = "product")

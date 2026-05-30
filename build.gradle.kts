@@ -46,13 +46,10 @@ repositories {
 
 dependencies {
     // ─── Web ───────────────────────────────────
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
     // ─── Hibernate / JPA ───────────────────────
-    // Spring Boot 4.0.1 では Hibernate 7.1 が同梱される
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-
-    // Hibernate の型変換・スペシャルタイプをサポート
     implementation("org.hibernate.orm:hibernate-core")
 
     // ─── Validation ────────────────────────────
@@ -74,6 +71,7 @@ dependencies {
 
     // ─── Test ──────────────────────────────────
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-webmvc-test")
 }
 
 tasks.withType<Test> {
@@ -82,3 +80,11 @@ tasks.withType<Test> {
 
 // ビルド前に Spotless チェックを実行（CI向け）
 tasks.named("check") { dependsOn("spotlessCheck") }
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testLogging {
+        showStandardStreams = true
+        events("passed", "failed", "skipped")  // ← 追加
+    }
+}

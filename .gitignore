@@ -51,4 +51,4 @@ desktop.ini
 .env
 src/main/resources/application-local.properties
 
-.linux_command
+.linux_command.md
